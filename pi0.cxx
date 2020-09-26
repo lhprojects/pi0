@@ -15,15 +15,15 @@ bool check_perfect_matching = true;
 double const mpi0 = 0.135;
 
 //a good parameter for A0.15 C0.01
-//double chi2_threshould = 15;
-//double startalpha = 6;
-
-// a good parameter for A0.03 C0.01
-double chi2_threshould = 15;
+double chi2_threshould = 100;
 double startalpha = 10;
 
-//double chi2_threshould = 15;
-//double startalpha = 6;
+// a good parameter for A0.03 C0.01
+//double chi2_threshould = 100000;
+//double startalpha = 20;
+
+//double chi2_threshould = 50;
+//double startalpha = 10;
 
 void OnEvent(int nGamma, double const *en, double const *px, double const *py, double const *pz,
  double a, double c, std::vector<std::pair<int,int> > &pairs) {
@@ -39,8 +39,8 @@ void OnEvent(int nGamma, double const *en, double const *px, double const *py, d
 				double const tpz = pz[g1] + pz[g2];
 				double const ten = en[g1] + en[g2];
 
-				if(en[g1] < 1E-1) continue;
-				if(en[g2] < 1E-1) continue;
+				if(en[g1] < 1E-3) continue;
+				if(en[g2] < 1E-3) continue;
 				double const e1 = std::max(en[g1], 1E-6);
 				double const e2 = std::max(en[g2], 1E-6);
 
@@ -125,15 +125,15 @@ void OnEvent(int nGamma, double const *en, double const *px, double const *py, d
 
 		int const link_edge_start = edge_num;		
 		double dalpha = 0.1;
-		double endalpha = 2*startalpha +1E-6;
+		double endalpha = startalpha +1E-6;
 
-		for(double alpha = 2*startalpha; alpha < endalpha;  alpha += dalpha) {
+		for(double alpha = startalpha; alpha < endalpha;  alpha += dalpha) {
 
 			edge_num = link_edge_start;
 			for(int g = 0; g < n_candidates; ++g) {
 				edges[2*edge_num] = 2 * g;
 				edges[2*edge_num+1] = 2 * g + 1;
-				weights[edge_num] = alpha;
+				weights[edge_num] = 2*alpha;
 				edge_num += 1;
 			}
 
@@ -172,7 +172,7 @@ void OnEvent(int nGamma, double const *en, double const *px, double const *py, d
 
 			if(verbose > 0) {
 				for(int g = 0; g < (int)gammas_single.size(); ++g) {
-					printf("single gamma %d\n (never be candidate)", gammas_single.at(g));
+					printf("single gamma %d (not a candidate)\n", gammas_single.at(g));
 				}
 
 				for(int g = 0; g < n_candidates; ++g) {
@@ -224,8 +224,8 @@ int main(int argc, char* argv[])
 		printf("pi0 a c rootfile\n");
 		exit(1);
 	} else {
-		sscanf(argv[1], "%lf", &c);
-		sscanf(argv[2], "%lf", &a);
+		sscanf(argv[1], "%lf", &a);
+		sscanf(argv[2], "%lf", &c);
 		sscanf(argv[3], "%s", &file[0]);
 	}
 
