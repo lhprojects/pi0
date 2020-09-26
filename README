@@ -1,0 +1,7 @@
+build:
+	cd blossom5-v2.05
+	make
+	cd ..
+	make
+run:
+	./pi0 a c file.root 
